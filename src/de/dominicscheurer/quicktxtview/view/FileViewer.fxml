@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.web.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dominicscheurer.quicktxtview.view.FileViewerController">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" stylesheets="de/dominicscheurer/quicktxtview/view/FileViewer.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.dominicscheurer.quicktxtview.view.FileViewerController">
    <children>
       <SplitPane dividerPositions="0.3530066815144766" layoutX="224.0" layoutY="135.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -17,7 +19,24 @@
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <WebView fx:id="directoryContentView" prefHeight="598.0" prefWidth="626.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <BorderPane prefHeight="598.0" prefWidth="577.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <center>
+                        <WebView fx:id="directoryContentView" prefHeight="598.0" prefWidth="626.0" BorderPane.alignment="CENTER" />
+                     </center>
+                     <bottom>
+                        <BorderPane BorderPane.alignment="CENTER">
+                           <left>
+                              <Label text="File name pattern:" BorderPane.alignment="CENTER" />
+                           </left>
+                           <center>
+                              <TextField fx:id="filePatternTextField" prefHeight="26.0" prefWidth="240.0" promptText="Regular expression for filtering files." text=".*\.+(log|txt)" BorderPane.alignment="CENTER">
+                                 <tooltip>
+                                    <Tooltip text="Enter a valid Java regular expression for filtering files."></Tooltip>
+                                 </tooltip></TextField>
+                           </center>
+                        </BorderPane>
+                     </bottom>
+                  </BorderPane>
                </children>
             </AnchorPane>
         </items>

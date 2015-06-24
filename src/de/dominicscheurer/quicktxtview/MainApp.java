@@ -75,7 +75,7 @@ public class MainApp extends Application {
 				controller.expandToDirectory(file);
 			}
 			else {
-				System.out.println("Usage: F3TextViewer [directoryToExpand]");
+				System.out.println("Usage: F3TextViewer [--dir=DIRECTORY_TO_EXPAND]");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

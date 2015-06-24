@@ -11,9 +11,12 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
@@ -21,6 +24,10 @@ import javafx.scene.web.WebView;
 import de.dominicscheurer.quicktxtview.model.DirectoryTreeItem;
 
 public class FileViewerController {
+	private static final String FILE_VIEWER_CSS_FILE = "FileViewer.css";
+
+	private static final String ERROR_TEXT_FIELD_CSS_CLASS = "errorTextField";
+
 	private static final int MAX_FILESIZE_BYTES_TO_DISPLAY = 5 * 1024;
 
 	@FXML
@@ -29,17 +36,41 @@ public class FileViewerController {
 	@FXML
 	private WebView directoryContentView;
 	
+	@FXML
+	private TextField filePatternTextField;
+	
 	private boolean isInShowContentsMode = false;
 	
 	private String fileTreeViewerCSS;
+	private Pattern filePattern;
 	
 	@FXML
 	private void initialize() {
+		filePattern = Pattern.compile(filePatternTextField.getText());
+		
+		filePatternTextField.setOnKeyReleased(event -> {
+			final String input = filePatternTextField.getText();
+			try {
+				Pattern p = Pattern.compile(input);
+				filePattern = p;
+				
+				filePatternTextField.getStyleClass().remove(ERROR_TEXT_FIELD_CSS_CLASS);
+				
+				if (!fileSystemView.getSelectionModel().isEmpty()) {
+					showDirectoryContents(fileSystemView.getSelectionModel().getSelectedItem());
+				}
+			} catch (PatternSyntaxException e) {
+				filePatternTextField.getStyleClass().add(ERROR_TEXT_FIELD_CSS_CLASS);
+			}
+			
+			filePatternTextField.applyCss();
+		});
+		
 		fileSystemView.getSelectionModel().selectedItemProperty().addListener(
 				(observable, oldValue, newValue) -> showDirectoryContents(newValue));
 		
 		{
-			Scanner s = new Scanner(getClass().getResourceAsStream("FileViewer.css"));
+			Scanner s = new Scanner(getClass().getResourceAsStream(FILE_VIEWER_CSS_FILE));
 			s.useDelimiter("\\A");
 			fileTreeViewerCSS = s.hasNext() ? s.next() : "";
 			s.close();
@@ -67,6 +98,8 @@ public class FileViewerController {
 	public void expandToDirectory(File file) {
 		Iterator<Path> it = file.toPath().iterator();
 		
+		//FIXME: The below root directory selection will not work for Windows systems.
+		// => Do something with `file.toPath().getRoot()`.
 		TreeItem<File> currentDir = fileSystemView.getRoot();
 		while (it.hasNext()) {
 			final String currDirName = it.next().toString();
@@ -79,9 +112,17 @@ public class FileViewerController {
 			}
 		}
 		
+		fileSystemView.getSelectionModel().clearSelection();
+		fileSystemView.getSelectionModel().select(currentDir);
+		fileSystemView.scrollTo(fileSystemView.getSelectionModel().getSelectedIndex());
+		
 	}
 
 	private void showDirectoryContents(TreeItem<File> selectedDirectory) {
+		if (selectedDirectory == null) {
+			return;
+		}
+		
 		final WebEngine webEngine = directoryContentView.getEngine();
 		webEngine.loadContent(!isInShowContentsMode ?
 				getFileNamesInDirectoryHTML(selectedDirectory.getValue()) :
@@ -167,7 +208,7 @@ public class FileViewerController {
 		File[] files = directory.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
-				return pathname.isFile();
+				return pathname.isFile() && filePattern.matcher(pathname.getName().toString()).matches();
 			}
 		});
 		

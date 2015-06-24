@@ -1,3 +1,5 @@
+.errorTextField { -fx-background-color: red; }
+
 /* Directory list view */
 #fileList { font-family:Georgia, Times, serif; font-size:15.0px; }
 #fileList ul { list-style: none; padding: 0.0; }
