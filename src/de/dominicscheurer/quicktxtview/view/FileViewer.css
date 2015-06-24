@@ -1,0 +1,13 @@
+/* Directory list view */
+#fileList { font-family:Georgia, Times, serif; font-size:15.0px; }
+#fileList ul { list-style: none; padding: 0.0; }
+#fileList ul li { display:block; text-decoration:none; color:#000000; background-color:#FFFFFF; line-height:30.0px;
+  border-bottom-style:solid; border-bottom-width:1.0px; border-bottom-color:#CCCCCC; padding-left:10.0px; }
+#fileList ul li.even {background-color: #d8d8d8;}
+#fileList ul li:hover { color:#FFFFFF; background-color:#007df5; }
+.fileName { font-weight: bold; }
+
+/* File contents view */
+div.entry {margin-bottom: 10.0px;}
+div.entry p {background-color: #d8d8d8; margin-top: 0.0; padding: 10.0px;}
+div.entry h3 {background-color: #b5b5b5; padding: 10.0px; margin: 0.0;}
