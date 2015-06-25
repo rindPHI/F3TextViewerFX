@@ -1,4 +1,4 @@
-# F3TextViewer
+# F3TextViewerFX
 
 Simple text viewer for quickly inspecting the content of all text files in a directory at once.
 
@@ -8,7 +8,7 @@ Just run `ant` in the project directory.
 
 ## Usage
 
-1. Start the program with `java -jar F3TextViewer.jar [--dir=DIRECTORY_TO_EXPAND]`.
+1. Start the program with `java -jar F3TextViewerFX.jar [--dir=DIRECTORY_TO_EXPAND]`.
 2. Navigate to the directory to inspect; you will be presented the contained files in the right pane.
 3. Press **F3** to switch from *file name mode* to *file contents mode*.
 
