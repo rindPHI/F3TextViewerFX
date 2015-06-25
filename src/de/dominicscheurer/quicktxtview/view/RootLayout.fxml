@@ -37,6 +37,7 @@
             <Menu mnemonicParsing="false" text="Config">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handleSetFileSizeThreshold" text="Set file size threshold" />
+                  <MenuItem mnemonicParsing="false" onAction="#handleSelectCharset" text="Select charset" />
               </items>
             </Menu>
         </menus>

@@ -50,6 +50,7 @@ public class FileViewerController {
 	private static final String ERROR_TEXT_FIELD_CSS_CLASS = "errorTextField";
 
 	private FileSize fileSizeThreshold = new FileSize(5, FileSizeUnits.KB);
+	private Charset charset = Charset.defaultCharset();
 
 	@FXML
 	private TreeView<File> fileSystemView;
@@ -126,12 +127,27 @@ public class FileViewerController {
 		refreshFileSizeLabel();
 	}
 	
+	public FileSize getFileSizeThreshold() {
+		return fileSizeThreshold;
+	}
+	
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+		refreshFileContentsView();
+	}
+	
+	public Charset getCharset() {
+		return charset;
+	}
+	
 	private void refreshFileSizeLabel() {
 		fileSizeThresholdLabel.setText(fileSizeThreshold.getSize() + " " + fileSizeThreshold.getUnit().toString());
 	}
 	
-	public FileSize getFileSizeThresholdBytes() {
-		return fileSizeThreshold;
+	private void refreshFileContentsView() {
+		if (!fileSystemView.getSelectionModel().isEmpty()) {
+			showDirectoryContents(fileSystemView.getSelectionModel().getSelectedItem());
+		}
 	}
 	
 	public void expandToDirectory(File file) {
@@ -220,7 +236,7 @@ public class FileViewerController {
 		for (File file : files) {
 			try {
 				byte[] encoded = Files.readAllBytes(file.toPath());
-				String contentsString = new String(encoded, Charset.defaultCharset());
+				String contentsString = new String(encoded, charset);
 				contentsString = contentsString.replace("<", "&lt;");
 				contentsString = contentsString.replace(">", "&gt;");
 				contentsString = contentsString.replace("\n", "<br/>");

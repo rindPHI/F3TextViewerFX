@@ -20,6 +20,7 @@ package de.dominicscheurer.quicktxtview;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 import javafx.application.Application;
@@ -32,6 +33,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.dominicscheurer.quicktxtview.model.FileSize;
 import de.dominicscheurer.quicktxtview.model.FileSize.FileSizeUnits;
+import de.dominicscheurer.quicktxtview.view.CharsetSettingsDialogController;
 import de.dominicscheurer.quicktxtview.view.FileViewerController;
 import de.dominicscheurer.quicktxtview.view.MaxFileSizeSettingsDialogController;
 import de.dominicscheurer.quicktxtview.view.RootLayoutController;
@@ -119,14 +121,14 @@ public class MainApp extends Application {
 			
 			// Create the dialog Stage.
 	        Stage dialogStage = new Stage();
-	        dialogStage.setTitle("Edit Person");
+	        dialogStage.setTitle("Choose file size threshold");
 	        dialogStage.initModality(Modality.WINDOW_MODAL);
 	        dialogStage.initOwner(primaryStage);
 	        Scene scene = new Scene(page);
 	        dialogStage.setScene(scene);
 	        
 	        MaxFileSizeSettingsDialogController controller = loader.getController();
-	        controller.setMaxFileSizeInitially(fileViewerCtrl.getFileSizeThresholdBytes());
+	        controller.setMaxFileSizeInitially(fileViewerCtrl.getFileSizeThreshold());
 	        controller.setDialogStage(dialogStage);
 	        
 	        dialogStage.showAndWait();
@@ -140,6 +142,39 @@ public class MainApp extends Application {
 		}
 		
 		return STD_FILESIZE_THRESHOLD;
+	}
+	
+	/**
+	 * @return Returns the chosen file size threshold in bytes or the standard of 5KB.
+	 */
+	public Charset showCharsetSettingsDialog() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			AnchorPane page = (AnchorPane) loader.load(getClass().getResourceAsStream("view/CharsetSettingsDialog.fxml"));
+			
+			// Create the dialog Stage.
+	        Stage dialogStage = new Stage();
+	        dialogStage.setTitle("Choose charset");
+	        dialogStage.initModality(Modality.WINDOW_MODAL);
+	        dialogStage.initOwner(primaryStage);
+	        Scene scene = new Scene(page);
+	        dialogStage.setScene(scene);
+	        
+	        CharsetSettingsDialogController controller = loader.getController();
+	        controller.setSelectedCharsetInitially(fileViewerCtrl.getCharset());
+	        controller.setDialogStage(dialogStage);
+	        
+	        dialogStage.showAndWait();
+	        
+	        if (controller.isOkClicked()) {
+	        	return controller.getSelectedCharset();
+	        }
+	        
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return fileViewerCtrl.getCharset();
 	}
 
 	/**

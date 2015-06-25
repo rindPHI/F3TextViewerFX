@@ -37,6 +37,11 @@ public class RootLayoutController {
 	private void handleSetFileSizeThreshold() {
 		mainApp.getFileViewerCtrl().setFileSizeThreshold(mainApp.showMaxFileSizeSettingsDialog());
 	}
+
+	@FXML
+	private void handleSelectCharset() {
+		mainApp.getFileViewerCtrl().setCharset(mainApp.showCharsetSettingsDialog());
+	}
 	
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
