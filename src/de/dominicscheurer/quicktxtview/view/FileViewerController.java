@@ -16,19 +16,22 @@ import java.util.regex.PatternSyntaxException;
 
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import de.dominicscheurer.quicktxtview.model.DirectoryTreeItem;
+import de.dominicscheurer.quicktxtview.model.FileSize;
+import de.dominicscheurer.quicktxtview.model.FileSize.FileSizeUnits;
 
 public class FileViewerController {
 	private static final String FILE_VIEWER_CSS_FILE = "FileViewer.css";
 
 	private static final String ERROR_TEXT_FIELD_CSS_CLASS = "errorTextField";
 
-	private static final int MAX_FILESIZE_BYTES_TO_DISPLAY = 5 * 1024;
+	private FileSize fileSizeThreshold = new FileSize(5, FileSizeUnits.KB);
 
 	@FXML
 	private TreeView<File> fileSystemView;
@@ -38,6 +41,9 @@ public class FileViewerController {
 	
 	@FXML
 	private TextField filePatternTextField;
+	
+	@FXML
+	private Label fileSizeThresholdLabel;
 	
 	private boolean isInShowContentsMode = false;
 	
@@ -88,17 +94,32 @@ public class FileViewerController {
 		}
 		
 		fileSystemView.getRoot().setExpanded(true);
+		refreshFileSizeLabel();
 	}
 	
 	public void toggleInShowContentsMode() {
 		isInShowContentsMode = !isInShowContentsMode;
-		showDirectoryContents(fileSystemView.getSelectionModel().getSelectedItem());
+		refreshFileSystemView();
+	}
+	
+	public void setFileSizeThreshold(FileSize fileSizeThreshold) {
+		this.fileSizeThreshold = fileSizeThreshold;
+		refreshFileSystemView();
+		refreshFileSizeLabel();
+	}
+	
+	private void refreshFileSizeLabel() {
+		fileSizeThresholdLabel.setText(fileSizeThreshold.getSize() + " " + fileSizeThreshold.getUnit().toString());
+	}
+	
+	public FileSize getFileSizeThresholdBytes() {
+		return fileSizeThreshold;
 	}
 	
 	public void expandToDirectory(File file) {
 		Iterator<Path> it = file.toPath().iterator();
 		
-		//FIXME: The below root directory selection will not work for Windows systems.
+		//FIXME: The below root directory selection *might* not work for Windows systems.
 		// => Do something with `file.toPath().getRoot()`.
 		TreeItem<File> currentDir = fileSystemView.getRoot();
 		while (it.hasNext()) {
@@ -127,6 +148,10 @@ public class FileViewerController {
 		webEngine.loadContent(!isInShowContentsMode ?
 				getFileNamesInDirectoryHTML(selectedDirectory.getValue()) :
 			    getFileContentsInDirectoryHTML(selectedDirectory.getValue()));
+	}
+	
+	private void refreshFileSystemView() {
+		showDirectoryContents(fileSystemView.getSelectionModel().getSelectedItem());
 	}
 	
 	private String getFileNamesInDirectoryHTML(File directory) {
@@ -175,10 +200,6 @@ public class FileViewerController {
 			.append(fileTreeViewerCSS)
 			.append("</style>");
 		for (File file : files) {
-			if (file.length() > MAX_FILESIZE_BYTES_TO_DISPLAY) {
-				continue;
-			}
-			
 			try {
 				byte[] encoded = Files.readAllBytes(file.toPath());
 				String contentsString = new String(encoded, Charset.defaultCharset());
@@ -208,7 +229,9 @@ public class FileViewerController {
 		File[] files = directory.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(File pathname) {
-				return pathname.isFile() && filePattern.matcher(pathname.getName().toString()).matches();
+				return pathname.isFile() &&
+						filePattern.matcher(pathname.getName().toString()).matches() &&
+						pathname.length() <= fileSizeThreshold.toBytes();
 			}
 		});
 		

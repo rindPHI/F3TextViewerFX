@@ -29,11 +29,25 @@
                               <Label text="File name pattern:" BorderPane.alignment="CENTER" />
                            </left>
                            <center>
-                              <TextField fx:id="filePatternTextField" prefHeight="26.0" prefWidth="240.0" promptText="Regular expression for filtering files." text=".*\.+(log|txt)" BorderPane.alignment="CENTER">
+                              <TextField fx:id="filePatternTextField" promptText="Regular expression for filtering files." text=".*\.+(log|txt)" BorderPane.alignment="CENTER">
                                  <tooltip>
-                                    <Tooltip text="Enter a valid Java regular expression for filtering files."></Tooltip>
+                                    <Tooltip text="Enter a valid Java regular expression for filtering files." />
                                  </tooltip></TextField>
                            </center>
+                           <right>
+                              <BorderPane BorderPane.alignment="CENTER">
+                                 <left>
+                                    <Label text="File size threshold:" BorderPane.alignment="CENTER">
+                                       <padding>
+                                          <Insets left="10.0" right="5.0" />
+                                       </padding>
+                                    </Label>
+                                 </left>
+                                 <center>
+                                    <Label fx:id="fileSizeThresholdLabel" text="Label" BorderPane.alignment="CENTER" />
+                                 </center>
+                              </BorderPane>
+                           </right>
                         </BorderPane>
                      </bottom>
                   </BorderPane>
