@@ -4,7 +4,8 @@ Simple text viewer for quickly inspecting the content of all text files in a dir
 
 ## Build
 
-Just run `ant` in the project directory.
+1. Open build.xml and insert the path to an existing Eclipse installation to the property ECLIPSE_HOME
+2. Run `./build.sh` (Linux) in the project directory.
 
 ## Usage
 
