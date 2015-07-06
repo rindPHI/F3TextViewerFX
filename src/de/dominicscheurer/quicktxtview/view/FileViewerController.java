@@ -21,6 +21,7 @@ package de.dominicscheurer.quicktxtview.view;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -40,6 +41,10 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFText2HTML;
+
 import de.dominicscheurer.quicktxtview.model.DirectoryTreeItem;
 import de.dominicscheurer.quicktxtview.model.FileSize;
 import de.dominicscheurer.quicktxtview.model.FileSize.FileSizeUnits;
@@ -49,7 +54,7 @@ public class FileViewerController {
 
 	private static final String ERROR_TEXT_FIELD_CSS_CLASS = "errorTextField";
 
-	private FileSize fileSizeThreshold = new FileSize(5, FileSizeUnits.KB);
+	private FileSize fileSizeThreshold = new FileSize(1, FileSizeUnits.MB);
 	private Charset charset = Charset.defaultCharset();
 
 	@FXML
@@ -235,18 +240,32 @@ public class FileViewerController {
 			.append("</style>");
 		for (File file : files) {
 			try {
-				byte[] encoded = Files.readAllBytes(file.toPath());
-				String contentsString = new String(encoded, charset);
-				contentsString = contentsString.replace("<", "&lt;");
-				contentsString = contentsString.replace(">", "&gt;");
-				contentsString = contentsString.replace("\n", "<br/>");
+				String contentsString;
+				
+				if (file.getName().endsWith(".pdf")) {
+					final PDDocument doc = PDDocument.load(file);
+					final StringWriter writer = new StringWriter();
+					new PDFText2HTML("UTF-8").writeText(doc, writer);
+					
+					contentsString = writer.toString();
+					
+					writer.close();
+					doc.close();
+				} else {
+					byte[] encoded = Files.readAllBytes(file.toPath());
+					contentsString = new String(encoded, charset);
+					
+					contentsString = contentsString.replace("<", "&lt;");
+					contentsString = contentsString.replace(">", "&gt;");
+					contentsString = contentsString.replace("\n", "<br/>");
+				}
 				
 				sb.append("<div class=\"entry\"><h3>")
 					.append(file.getName())
 					.append("</h3>")
-					.append("<p>")
+					.append("<div class=\"content\">")
 					.append(contentsString)
-					.append("</p>")
+					.append("</div>")
 					.append("</div>");
 			} catch (IOException e) {}
 		}
