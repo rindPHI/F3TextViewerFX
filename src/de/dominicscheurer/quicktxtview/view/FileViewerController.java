@@ -50,12 +50,24 @@ import de.dominicscheurer.quicktxtview.model.FileSize;
 import de.dominicscheurer.quicktxtview.model.FileSize.FileSizeUnits;
 
 public class FileViewerController {
-	private static final String FILE_VIEWER_CSS_FILE = "FileViewer.css";
+	public static final Comparator<File> FILE_ACCESS_CMP =
+			(f1, f2) -> Long.compare(f1.lastModified(), f2.lastModified());
+			
+	public static final Comparator<File> FILE_ACCESS_CMP_REVERSE =
+			(f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified());
 
+	public static final Comparator<File> FILE_NAME_CMP =
+			(f1, f2) -> f1.getName().compareTo(f2.getName());
+
+	public static final Comparator<File> FILE_NAME_CMP_REVERSE =
+			(f1, f2) -> f2.getName().compareTo(f1.getName());
+	
+	private static final String FILE_VIEWER_CSS_FILE = "FileViewer.css";
 	private static final String ERROR_TEXT_FIELD_CSS_CLASS = "errorTextField";
 
 	private FileSize fileSizeThreshold = new FileSize(1, FileSizeUnits.MB);
 	private Charset charset = Charset.defaultCharset();
+	private Comparator<File> fileComparator = FILE_ACCESS_CMP;
 
 	@FXML
 	private TreeView<File> fileSystemView;
@@ -143,6 +155,15 @@ public class FileViewerController {
 	
 	public Charset getCharset() {
 		return charset;
+	}
+
+	public Comparator<File> getFileComparator() {
+		return fileComparator;
+	}
+
+	public void setFileComparator(Comparator<File> fileComparator) {
+		this.fileComparator = fileComparator;
+		refreshFileContentsView();
 	}
 	
 	private void refreshFileSizeLabel() {
@@ -292,12 +313,7 @@ public class FileViewerController {
 			return new File[0];
 		}
 		
-		Arrays.sort(files, new Comparator<File>() {
-			@Override
-			public int compare(File o1, File o2) {
-				return Long.compare(o1.lastModified(), o2.lastModified());
-			}
-		});
+		Arrays.sort(files, fileComparator);
 		
 		return files;
 	}

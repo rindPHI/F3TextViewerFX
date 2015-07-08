@@ -18,19 +18,47 @@
 
 package de.dominicscheurer.quicktxtview.view;
 
-import de.dominicscheurer.quicktxtview.MainApp;
+import java.io.File;
+import java.util.Comparator;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
+import javafx.scene.control.ToggleGroup;
+import de.dominicscheurer.quicktxtview.MainApp;
 
 public class RootLayoutController {
 	@FXML
 	private MenuItem closeMenuItem;
+	
+	@FXML
+	private ToggleGroup sortOrderToggleGroup;
 	
 	private MainApp mainApp;
 	
 	@FXML
 	private void initialize() {
 		closeMenuItem.setOnAction(event -> {System.exit(0);});
+		sortOrderToggleGroup.selectedToggleProperty().addListener((ov, toggle, newToggle) -> {
+			if (sortOrderToggleGroup.getSelectedToggle() != null) {
+				final String chosenOption = ((RadioMenuItem) sortOrderToggleGroup.getSelectedToggle()).getId();
+				
+				final Comparator<File> comparator;
+				if (chosenOption.equals("lastAccessed")) {
+					comparator = FileViewerController.FILE_ACCESS_CMP;
+				} else if (chosenOption.equals("lastAccessedReverse")) {
+					comparator = FileViewerController.FILE_ACCESS_CMP_REVERSE;
+				} else if (chosenOption.equals("fileNameAsc")) {
+					comparator = FileViewerController.FILE_NAME_CMP;
+				} else if (chosenOption.equals("fileNameDesc")) {
+					comparator = FileViewerController.FILE_NAME_CMP_REVERSE;
+				} else {
+					comparator = FileViewerController.FILE_ACCESS_CMP;
+				}
+				
+				mainApp.getFileViewerCtrl().setFileComparator(comparator);
+			}
+		});
 	}
 
 	@FXML

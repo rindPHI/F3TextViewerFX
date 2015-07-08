@@ -38,6 +38,18 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#handleSetFileSizeThreshold" text="Set file size threshold" />
                   <MenuItem mnemonicParsing="false" onAction="#handleSelectCharset" text="Select charset" />
+                  <Menu mnemonicParsing="false" text="Sort files by...">
+                     <items>
+                        <RadioMenuItem mnemonicParsing="false" selected="true" text="Last accessed" id="lastAccessed">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="sortOrderToggleGroup" />
+                           </toggleGroup>
+                        </RadioMenuItem>
+                        <RadioMenuItem mnemonicParsing="false" text="Last accessed (reverse)" toggleGroup="$sortOrderToggleGroup" id="lastAccessedReverse" />
+                        <RadioMenuItem mnemonicParsing="false" text="File name (ascending)" toggleGroup="$sortOrderToggleGroup" id="fileNameAsc" />
+                        <RadioMenuItem mnemonicParsing="false" text="File name (descending)" toggleGroup="$sortOrderToggleGroup" id="fileNameDesc" />
+                     </items>
+                  </Menu>
               </items>
             </Menu>
         </menus>

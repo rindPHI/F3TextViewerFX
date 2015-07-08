@@ -1,1 +1,1 @@
-javapackager -createjar -nocss2bin -appclass de.dominicscheurer.quicktxtview.MainApp -srcdir bin -outdir . -outfile F3TextViewerFX.jar -v
+javapackager -createjar -nocss2bin -appclass de.dominicscheurer.quicktxtview.MainApp -srcdir bin -classpath lib/fontbox-1.8.9.jar,lib/commons-logging-1.2.jar,lib/pdfbox-1.8.9.jar -outdir . -outfile F3TextViewerFX.jar -v
