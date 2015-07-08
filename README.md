@@ -2,6 +2,10 @@
 
 Simple text viewer for quickly inspecting the content of all text files in a directory at once.
 
+## Requirements
+
+F3TextViewerFX requires *Java 1.8*.
+
 ## Build
 
 1. Open build.xml and insert the path to an existing Eclipse installation to the property ECLIPSE_HOME
