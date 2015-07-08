@@ -2,6 +2,8 @@
 
 Simple text viewer for quickly inspecting the content of all text files in a directory at once.
 
+If you just want to use the program and not to extend it, you should try one of the *releases*.
+
 ## Requirements
 
 F3TextViewerFX requires *Java 1.8*.
